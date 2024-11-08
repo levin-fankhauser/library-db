@@ -1,4 +1,4 @@
-package org.example;
+package org.example.outdated;
 
 public class Buch {
     private String titel;
