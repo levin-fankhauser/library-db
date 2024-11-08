@@ -18,7 +18,16 @@ public class LendingService {
 	}
 
 	public void returnLending(String isbn, String email) {
-		lendingDao.returnLending(isbn, email);
+		lendingDao.getAllLendings()
+				.stream()
+				.filter(l -> l.book().isbn().equals(isbn) && l.customer().email().equals(email) && !l.returned())
+				.findFirst()
+				.ifPresent(lending -> lendingDao.updateLending(new Lending(lending.book(),
+						lending.customer(),
+						lending.lendingDate(),
+						lending.returnDate(),
+						true,
+						lending.lost())));
 	}
 
 	public boolean isBookAvailable(String isbn) {

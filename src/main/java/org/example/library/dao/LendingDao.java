@@ -16,14 +16,12 @@ public class LendingDao {
 		lendings.add(lending);
 	}
 
-	public void returnLending(String isbn, String email) {
-		for (Lending lending : lendings) {
-			if (lending.book().isbn().equals(isbn) && lending.customer().email().equals(email) && !lending.returned()) {
-				lendings.set(lendings.indexOf(lending), new Lending(
-						lending.book(), lending.customer(), lending.lendingDate(), lending.returnDate(), true, lending.lost()
-				));
-				break;
-			}
-		}
+	public void updateLending(Lending lending) {
+		lendings.stream()
+				.filter(l -> l.book().equals(lending.book()) &&
+						l.customer().equals(lending.customer()) &&
+						l.lendingDate().equals(lending.lendingDate()))
+				.findFirst()
+				.ifPresent(l -> lendings.set(lendings.indexOf(l), lending));
 	}
 }
