@@ -45,9 +45,6 @@ public class App {
 		Lending newLending = new Lending(newBook, newCustomer, "2023-03-01", "2023-03-15", false, false);
 		lendingService.addLending(newLending);
 
-		// Return a lending
-		lendingService.returnLending("ISBN3", "alice@example.com");
-
 		// Delete a book
 		bookService.deleteBook("ISBN1");
 
@@ -69,11 +66,6 @@ public class App {
 		// Check if a book is available
 		boolean isAvailable = lendingService.isBookAvailable("ISBN3");
 		System.out.println("\nIs Book ISBN3 Available? " + isAvailable);
-
-		// List overdue lendings
-		List<Lending> overdueLendings = lendingService.listOverdueLendings("2023-04-01");
-		System.out.println("\nOverdue Lendings:");
-		overdueLendings.forEach(System.out::println);
 
 		// Display updated lists
 		System.out.println("\nUpdated Books:");
