@@ -14,13 +14,19 @@ import org.example.library.models.Customer;
 import org.example.library.models.Lending;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.List;
 
 class LendingServiceTest {
 
+	@Mock
 	private LendingDao lendingDaoMock;
+
+	@InjectMocks
 	private LendingService lendingService;
 
 	private final Book book1 = new Book("Book Title 1", "Author 1", 2020, "12345", "Genre", 200, "English", "Description 1");
@@ -31,8 +37,7 @@ class LendingServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		lendingDaoMock = mock(LendingDao.class);
-		lendingService = new LendingService(lendingDaoMock);
+		MockitoAnnotations.openMocks(this);
 	}
 
 	@Test
