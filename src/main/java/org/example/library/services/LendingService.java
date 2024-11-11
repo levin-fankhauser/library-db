@@ -6,6 +6,7 @@ import org.example.library.models.Lending;
 import java.util.List;
 
 public class LendingService {
+
 	private final LendingDao lendingDao;
 
 	public LendingService(LendingDao lendingDao) {
@@ -21,7 +22,20 @@ public class LendingService {
 	}
 
 	public boolean isBookAvailable(String isbn) {
-		return lendingDao.getAllLendings().stream()
-				.noneMatch(lending -> lending.book().isbn().equals(isbn) && !lending.returned());
+		return lendingDao.getAllLendings().stream().noneMatch(lending -> lending.book().isbn().equals(isbn) && !lending.returned());
+	}
+
+	// TDD
+	public void returnLending(String isbn, String email) {
+		lendingDao.getAllLendings()
+				.stream()
+				.filter(l -> l.book().isbn().equals(isbn) && l.customer().email().equals(email) && !l.returned())
+				.findFirst()
+				.ifPresent(lending -> lendingDao.updateLending(new Lending(lending.book(),
+						lending.customer(),
+						lending.lendingDate(),
+						lending.returnDate(),
+						true,
+						false)));
 	}
 }
