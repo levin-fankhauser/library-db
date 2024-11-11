@@ -7,7 +7,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class LendingService {
-	private final LendingDao lendingDao = new LendingDao();
+	private final LendingDao lendingDao;
+
+	public LendingService(LendingDao lendingDao) {
+		this.lendingDao = lendingDao;
+	}
 
 	public List<Lending> getAllLendings() {
 		return lendingDao.getAllLendings();

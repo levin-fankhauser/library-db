@@ -6,7 +6,11 @@ import org.example.library.models.Customer;
 import java.util.List;
 
 public class CustomerService {
-	private final CustomerDao customerDao = new CustomerDao();
+	private final CustomerDao customerDao;
+
+	public CustomerService(CustomerDao customerDao) {
+		this.customerDao = customerDao;
+	}
 
 	public List<Customer> getAllCustomers() {
 		return customerDao.getAllCustomers();
@@ -17,6 +21,9 @@ public class CustomerService {
 	}
 
 	public void deleteCustomer(String email) {
+		if (customerDao.getAllCustomers().stream().noneMatch(c -> c.email().equals(email))) {
+			throw new IllegalArgumentException("Customer with email " + email + " does not exist.");
+		}
 		customerDao.deleteCustomer(email);
 	}
 

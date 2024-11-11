@@ -6,7 +6,12 @@ import org.example.library.models.Book;
 import java.util.List;
 
 public class BookService {
-	private final BookDao bookDao = new BookDao();
+	private final BookDao bookDao;
+
+	// Konstruktor für Dependency Injection
+	public BookService(BookDao bookDao) {
+		this.bookDao = bookDao;
+	}
 
 	public List<Book> getAllBooks() {
 		return bookDao.getAllBooks();

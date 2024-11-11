@@ -1,5 +1,8 @@
 package org.example.library;
 
+import org.example.library.dao.BookDao;
+import org.example.library.dao.CustomerDao;
+import org.example.library.dao.LendingDao;
 import org.example.library.models.Book;
 import org.example.library.models.Customer;
 import org.example.library.models.Lending;
@@ -10,9 +13,9 @@ import org.example.library.services.LendingService;
 import java.util.List;
 
 public class App {
-	private static final BookService bookService = new BookService();
-	private static final CustomerService customerService = new CustomerService();
-	private static final LendingService lendingService = new LendingService();
+	private static final BookService bookService = new BookService(new BookDao());
+	private static final CustomerService customerService = new CustomerService(new CustomerDao());
+	private static final LendingService lendingService = new LendingService(new LendingDao());
 
 	public static void main(String[] args) {
 		// Display all books

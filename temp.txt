@@ -1,0 +1,21 @@
+public Book book = new Book(
+			"Title1",
+			"Author1",
+			2021,
+			"123",
+			"Genre1",
+			100,
+			"DE",
+			"Description1"
+	);
+	public List<Book> books = Arrays.asList(book,
+			new Book(
+					"Title2",
+					"Author2",
+					2022,
+					"456",
+					"Genre2",
+					200,
+					"EN",
+					"Description2"
+			));
