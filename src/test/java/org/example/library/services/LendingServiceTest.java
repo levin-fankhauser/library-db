@@ -3,7 +3,10 @@ package org.example.library.services;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -95,4 +98,42 @@ class LendingServiceTest {
 
 		assertFalse(lendingService.isBookAvailable(book1.isbn()));
 	}
+
+	// TDD
+	// Testfall, falls die Ausleihe erfolgreich zurückgegeben wird
+	@Test
+	void testReturnLendingSuccessfully() {
+		Lending lending = new Lending(book1, customer1, "2024-01-01", "2024-01-10", false, false);
+		when(lendingDaoMock.getAllLendings()).thenReturn(List.of(lending));
+
+		lendingService.returnLending("12345", "john@example.com");
+
+		verify(lendingDaoMock, times(1)).updateLending(argThat(l -> l.returned() && l.book().isbn().equals("12345") && l.customer()
+				.email()
+				.equals("john@example.com")));
+	}
+
+	// Testfall, falls keine passende Ausleihe gefunden wird
+	@Test
+	void testReturnLendingNoMatchingLending() {
+		Lending lending = new Lending(book1, customer1, "2024-01-01", "2024-01-10", false, false);
+		when(lendingDaoMock.getAllLendings()).thenReturn(List.of(lending));
+
+		lendingService.returnLending("67890", "john@example.com");
+
+		verify(lendingDaoMock, never()).updateLending(any());
+	}
+
+	// Testfall, falls die Ausleihe bereits zurückgegeben wurde
+	@Test
+	void testReturnLendingAlreadyReturned() {
+		Lending lending = new Lending(book1, customer1, "2024-01-01", "2024-01-10", true, false);
+		when(lendingDaoMock.getAllLendings()).thenReturn(List.of(lending));
+
+		lendingService.returnLending("12345", "john@example.com");
+
+		verify(lendingDaoMock, never()).updateLending(any());
+	}
+
 }
+
