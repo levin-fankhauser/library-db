@@ -33,6 +33,9 @@ jobs:
       - name: Build and Test with Maven
         run: mvn clean install
 
+      - name: Run Mutation Tests with Pitest
+        run: mvn org.pitest:pitest-maven:mutationCoverage
+
       - name: Upload test results
         if: success()
         uses: actions/upload-artifact@v3

@@ -17,3 +17,8 @@ mvn test
 ```bash
 mvn clean install
 ```
+
+### Mutation-Tests ausführen
+```bash
+mvn org.pitest:pitest-maven:mutationCoverage
+```
