@@ -48,27 +48,7 @@ class CustomerServiceTest {
 	}
 
 	@Test
-	void testFindCustomerByEmailReturnsCorrectCustomer() {
-		Customer customer = new Customer("Jane", "jane@example.com", "123456789",
-				"300 Main St", "Village", "Province", "67890", "Country");
-		when(customerDao.getAllCustomers()).thenReturn(List.of(customer));
-
-		Customer foundCustomer = customerService.findCustomerByEmail("jane@example.com");
-		assertNotNull(foundCustomer);
-		assertEquals("Jane", foundCustomer.name());
-		assertEquals("jane@example.com", foundCustomer.email());
-	}
-
-	@Test
-	void testFindCustomerByEmailReturnsNullIfNotFound() {
-		when(customerDao.getAllCustomers()).thenReturn(List.of());
-
-		Customer foundCustomer = customerService.findCustomerByEmail("nonexistent@example.com");
-		assertNull(foundCustomer);
-	}
-
-	@Test
-	void mutationTestForDeleteCustomer() {
+	void testDeleteCustomer() {
 		String existingEmail = "john@example.com";
 		String nonExistentEmail = "nonexistent@example.com";
 
@@ -85,6 +65,26 @@ class CustomerServiceTest {
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> customerService.deleteCustomer(nonExistentEmail));
 
 		assertEquals("Customer with email " + nonExistentEmail + " does not exist.", exception.getMessage());
+	}
+
+	@Test
+	void testFindCustomerByEmail_CustomerExists() {
+		Customer customer = new Customer("Jane", "jane@example.com", "123456789",
+				"300 Main St", "Village", "Province", "67890", "Country");
+		when(customerDao.getAllCustomers()).thenReturn(List.of(customer));
+
+		Customer foundCustomer = customerService.findCustomerByEmail("jane@example.com");
+		assertNotNull(foundCustomer);
+		assertEquals("Jane", foundCustomer.name());
+		assertEquals("jane@example.com", foundCustomer.email());
+	}
+
+	@Test
+	void testFindCustomerByEmail_CustomerDoesNotExist() {
+		when(customerDao.getAllCustomers()).thenReturn(List.of());
+
+		Customer foundCustomer = customerService.findCustomerByEmail("nonexistent@example.com");
+		assertNull(foundCustomer);
 	}
 
 }

@@ -67,7 +67,7 @@ class LendingServiceTest {
 	}
 
 	@Test
-	void testIsBookAvailableTrueCaseOne() {
+	void testIsBookAvailable_LendingExistsOne() {
 		Lending lending = new Lending(book1, customer1, "2024-10-01", "2024-10-15", true, false);
 		LendingDao lendingDaoMock = mock(LendingDao.class);
 		when(lendingDaoMock.getAllLendings()).thenReturn(List.of(lending));
@@ -78,7 +78,7 @@ class LendingServiceTest {
 	}
 
 	@Test
-	void testIsBookAvailableTrueCaseTwo() {
+	void testIsBookAvailable_LendingExistsTwo() {
 		Lending lending = new Lending(book2, customer1, "2024-10-01", "2024-10-15", false, false);
 		LendingDao lendingDaoMock = mock(LendingDao.class);
 		when(lendingDaoMock.getAllLendings()).thenReturn(List.of(lending));
@@ -89,7 +89,7 @@ class LendingServiceTest {
 	}
 
 	@Test
-	void testIsBookAvailableFalse() {
+	void testIsBookAvailable_LendingDoesNotExist() {
 		Lending lending = new Lending(book1, customer1, "2024-10-01", "2024-10-15", false, false);
 		LendingDao lendingDaoMock = mock(LendingDao.class);
 		when(lendingDaoMock.getAllLendings()).thenReturn(List.of(lending));
