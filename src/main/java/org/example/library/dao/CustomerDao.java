@@ -2,25 +2,73 @@ package org.example.library.dao;
 
 import org.example.library.models.Customer;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// Eine richtige Anbindung zur DB wird erst bei LB2 implementiert, da hier wie Besprochen noch keine DB benötigt wird, da der Dao in den Test gemockt wird. 
 public class CustomerDao {
-	private final List<Customer> customers = new ArrayList<>(List.of(
-			new Customer("John Doe", "john@example.com", "1234567890", "123 Street", "City", "State", "12345", "Country"),
-			new Customer("Jane Smith", "jane@example.com", "0987654321", "456 Avenue", "City", "State", "67890", "Country")
-	));
+
+	private static final String DB_URL = "jdbc:postgresql://localhost:5432/library";
+	private static final String DB_USER = "postgres";
+	private static final String DB_PASSWORD = "password";
 
 	public List<Customer> getAllCustomers() {
-		return new ArrayList<>(customers);
+		List<Customer> customers = new ArrayList<>();
+		String query = "SELECT * FROM customers";
+
+		try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+
+			while (rs.next()) {
+				customers.add(new Customer(
+						rs.getString("name"),
+						rs.getString("email"),
+						rs.getString("phone"),
+						rs.getString("address"),
+						rs.getString("city"),
+						rs.getString("state"),
+						rs.getString("zip_code"),
+						rs.getString("country")
+				));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return customers;
 	}
 
 	public void addCustomer(Customer customer) {
-		customers.add(customer);
+		String query = "INSERT INTO customers (name, email, phone, address, city, state, zip_code, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+		try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+				PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+			pstmt.setString(1, customer.name());
+			pstmt.setString(2, customer.email());
+			pstmt.setString(3, customer.phone());
+			pstmt.setString(4, customer.address());
+			pstmt.setString(5, customer.city());
+			pstmt.setString(6, customer.state());
+			pstmt.setString(7, customer.zipCode());
+			pstmt.setString(8, customer.country());
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void deleteCustomer(String email) {
-		customers.removeIf(customer -> customer.email().equals(email));
+		String query = "DELETE FROM customers WHERE email = ?";
+
+		try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+				PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+			pstmt.setString(1, email);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

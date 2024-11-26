@@ -2,25 +2,73 @@ package org.example.library.dao;
 
 import org.example.library.models.Book;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// Eine richtige Anbindung zur DB wird erst bei LB2 implementiert, da hier wie Besprochen noch keine DB benötigt wird, da der Dao in den Test gemockt wird. 
 public class BookDao {
-	private final List<Book> books = new ArrayList<>(List.of(
-			new Book("Title_1", "Author1", 2000, "ISBN1", "Genre1", 300, "English", "Description1"),
-			new Book("Title_2", "Author2", 2005, "ISBN2", "Genre2", 350, "German", "Description2")
-	));
+
+	private static final String DB_URL = "jdbc:postgresql://localhost:5432/library";
+	private static final String DB_USER = "postgres";
+	private static final String DB_PASSWORD = "password";
 
 	public List<Book> getAllBooks() {
-		return new ArrayList<>(books);
+		List<Book> books = new ArrayList<>();
+		String query = "SELECT * FROM books";
+
+		try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(query)) {
+
+			while (rs.next()) {
+				books.add(new Book(
+						rs.getString("title"),
+						rs.getString("author"),
+						rs.getInt("year"),
+						rs.getString("isbn"),
+						rs.getString("genre"),
+						rs.getInt("pages"),
+						rs.getString("language"),
+						rs.getString("description")
+				));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return books;
 	}
 
 	public void addBook(Book book) {
-		books.add(book);
+		String query = "INSERT INTO books (title, author, year, isbn, genre, pages, language, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+		try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+				PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+			pstmt.setString(1, book.title());
+			pstmt.setString(2, book.author());
+			pstmt.setInt(3, book.year());
+			pstmt.setString(4, book.isbn());
+			pstmt.setString(5, book.genre());
+			pstmt.setInt(6, book.pages());
+			pstmt.setString(7, book.language());
+			pstmt.setString(8, book.description());
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void deleteBook(String isbn) {
-		books.removeIf(book -> book.isbn().equals(isbn));
+		String query = "DELETE FROM books WHERE isbn = ?";
+
+		try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+				PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+			pstmt.setString(1, isbn);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
